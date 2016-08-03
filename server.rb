@@ -75,29 +75,28 @@ module RestServiceModule
 		@base_url = "http://" + local_ip + ":4567/ApiTest"
 
 		def self.api(args)
-			if args[0] == "config"
-				return configfeed_with_few_languages_android (@base_url)
- 			end
-			if args[0] == "navigation"
- 				return navigation_with_few_structures (@base_url)
- 			end
-			if args[0] == "list"
-				if args[1] == "structure"
-					if args[2] == "9077"
-		 				return structure_with_one_article (@base_url)
-		 			end
-		 		end
-		 	end
-		 	if args[0] == "detail"
-		 		if args[1] == "article"
-		 			if args[2] == "19424554"
-		 				return article_with_html (@base_url)
-		 			end
-		 		end
-		 	end
-		 	if args[0] == "epg"
-		 		return epg_error (@base_url)
-		 	end
+			# this is the structure_tree with the different endpoints for the API and what should get sent
+			structure_tree = {
+				"config"	=> 	{"init"			=>	"configfeed_with_few_languages_android"},
+				"detail"	=> 	{"article"		=>	{"19424554"	=>	"article_with_html",
+													"7777777"	=>	"test"},
+								"video"			=>	{"88888888"	=>	"video_detail"}},
+				"list"		=>	{"structure"	=>	{"9077" 		=>	"structure_with_one_article"}}
+			}
+
+			# hiermit kann ich aus dem Strukturbaum die letztendliche Funktion herausholen
+			# for all steps in the request path
+			for i in 0..args.size-1
+				# for the first step, we have to load the structure_tree
+				if i == 0
+					definition_name = structure_tree[args[i]]
+				# after that, we can just step through the hash
+				else
+					definition_name = definition_name[args[i]]
+				end
+				#puts definition_name
+			end
+			return send(definition_name, @base_url)
 		end
 	end
 end
