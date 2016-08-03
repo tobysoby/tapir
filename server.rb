@@ -40,25 +40,34 @@ end
  
 class RestServlet < HTTPServlet::AbstractServlet
 	def do_GET(req,resp)
-		# Split the path into pieces, getting rid of the first slash
+		# split the path into pieces, getting rid of the first slash
+		puts "req.path[1..-1]: " + req.path[1..-1]
 		path = req.path[1..-1].split('/')
+		# flatten the request parameters and put them together
+		request_parameters_flattened =  req.query.flatten
+		request_parameters_flattened.each_with_index do |r_p, i|
+			if i == 0 || i % 2 == 0
+				# put the different parts of the split path and the request parameters together
+				path.push r_p + "=" + request_parameters_flattened[i+1]
+			end
+		end
 		raise HTTPStatus::NotFound if !RestServiceModule.const_defined?(path[0])
 		response_class = RestServiceModule.const_get(path[0])
        
 		if response_class and response_class.is_a?(Class)
-			# There was a method given
+			# there was a method given
 			if path[1]
 				response_method = path[1].to_sym
-				# Make sure the method exists in the class
+				# make sure the method exists in the class
 				raise HTTPStatus::NotFound if !response_class.respond_to?(response_method)
-				# Remaining path segments get passed in as arguments to the method
+				# remaining path segments get passed in as arguments to the method
 				if path.length > 2
 					resp.body = response_class.send(response_method, path[2..-1])
 				else
 					resp.body = response_class.send(response_method)
 				end
 			raise HTTPStatus::OK
-			# No method was given, so check for an "index" method instead
+			# no method was given, so check for an "index" method instead
 			else
 				raise HTTPStatus::NotFound if !response_class.respond_to?(:index)
 				resp.body = response_class.send(:index)
@@ -77,14 +86,15 @@ module RestServiceModule
 		def self.api(args)
 			# this is the structure_tree with the different endpoints for the API and what should get sent
 			structure_tree = {
-				"config"	=> 	{"init"			=>	"configfeed_with_few_languages_android"},
+				"config"	=> 	{"init"			=>	{"product=dwapp" => {"platform=android"	=>	{"version=2.2.6" => "configfeed_with_few_languages_android"},
+																		"platform=ios"		=>	{"version=2.2.6" => "configfeed_with_few_languages_ios"}}}},
 				"detail"	=> 	{"article"		=>	{"19424554"	=>	"article_with_html",
 													"7777777"	=>	"test"},
 								"video"			=>	{"88888888"	=>	"video_detail"}},
 				"list"		=>	{"structure"	=>	{"9077" 		=>	"structure_with_one_article"}}
 			}
 
-			# hiermit kann ich aus dem Strukturbaum die letztendliche Funktion herausholen
+			# get the different endpoints that are called for the api
 			# for all steps in the request path
 			for i in 0..args.size-1
 				# for the first step, we have to load the structure_tree
