@@ -1,9 +1,9 @@
 # require the functions that determine what the API is supposed to send
-require './beispiele/config.rb'
-require './beispiele/navigation.rb'
-require './beispiele/structure.rb'
-require './beispiele/article.rb'
-require './beispiele/epg.rb'
+require './answers/config.rb'
+require './answers/navigation.rb'
+require './answers/structure.rb'
+require './answers/article.rb'
+require './answers/epg.rb'
 
 # load the structure_tree
 def load_structure_tree
