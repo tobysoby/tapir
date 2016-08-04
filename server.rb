@@ -9,8 +9,6 @@ require './properties.rb'
  
 include WEBrick
 
-# domain = "http://172.24.73.152:4567/ApiTest/"
-
 # get the local ip address
 def local_ip
   orig = Socket.do_not_reverse_lookup  
@@ -38,7 +36,6 @@ end
 class RestServlet < HTTPServlet::AbstractServlet
 	def do_GET(req,resp)
 		# split the path into pieces, getting rid of the first slash
-		puts "req.path[1..-1]: " + req.path[1..-1]
 		path = req.path[1..-1].split('/')
 
 		# with the following, we put the different request parameters into the args array

@@ -1,19 +1,17 @@
 # require the functions that determine what the API is supposed to send
-require './answers/config.rb'
-require './answers/navigation.rb'
-require './answers/structure.rb'
-require './answers/article.rb'
-require './answers/epg.rb'
+require './answers/example_1.rb'
+require './answers/example_2.rb'
+require './answers/example_3.rb'
 
 # load the structure_tree
 def load_structure_tree
 	# this is the structure_tree with the different endpoints for the API and what should get sent
 	return {
-				"config"	=> 	{"init"			=>	{"product=dwapp" => {"platform=android"	=>	{"version=2.2.6" => "configfeed_with_few_languages_android"},
-																		"platform=ios"		=>	{"version=2.2.6" => "configfeed_with_few_languages_ios"}}}},
-				"detail"	=> 	{"article"		=>	{"19424554"	=>	"article_with_html",
-													"7777777"	=>	"test"},
-								"video"			=>	{"88888888"	=>	"video_detail"}},
-				"list"		=>	{"structure"	=>	{"9077" 		=>	"structure_with_one_article"}}
+				"path1"	=> 	{"path11"	=>	{"requestparameterx=y" 	=> 	{"requestparameterd=e"	=>	"example_1",
+																		"requestparameterd=f"	=>	"example_2"}
+											}
+							},
+				"path2"	=> 	{"path22"	=>	{"xyz"	=>	"example_3"}
+							}
 			}
 end
