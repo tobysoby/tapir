@@ -4,11 +4,8 @@ require 'webrick'
 require 'json'
 require 'socket'
 
-require './beispiele/config.rb'
-require './beispiele/navigation.rb'
-require './beispiele/structure.rb'
-require './beispiele/article.rb'
-require './beispiele/epg.rb'
+# require the properties file
+require './properties.rb'
  
 include WEBrick
 
@@ -43,6 +40,8 @@ class RestServlet < HTTPServlet::AbstractServlet
 		# split the path into pieces, getting rid of the first slash
 		puts "req.path[1..-1]: " + req.path[1..-1]
 		path = req.path[1..-1].split('/')
+
+		# with the following, we put the different request parameters into the args array
 		# flatten the request parameters and put them together
 		request_parameters_flattened =  req.query.flatten
 		request_parameters_flattened.each_with_index do |r_p, i|
@@ -51,6 +50,7 @@ class RestServlet < HTTPServlet::AbstractServlet
 				path.push r_p + "=" + request_parameters_flattened[i+1]
 			end
 		end
+
 		raise HTTPStatus::NotFound if !RestServiceModule.const_defined?(path[0])
 		response_class = RestServiceModule.const_get(path[0])
        
@@ -84,15 +84,8 @@ module RestServiceModule
 		@base_url = "http://" + local_ip + ":4567/ApiTest"
 
 		def self.api(args)
-			# this is the structure_tree with the different endpoints for the API and what should get sent
-			structure_tree = {
-				"config"	=> 	{"init"			=>	{"product=dwapp" => {"platform=android"	=>	{"version=2.2.6" => "configfeed_with_few_languages_android"},
-																		"platform=ios"		=>	{"version=2.2.6" => "configfeed_with_few_languages_ios"}}}},
-				"detail"	=> 	{"article"		=>	{"19424554"	=>	"article_with_html",
-													"7777777"	=>	"test"},
-								"video"			=>	{"88888888"	=>	"video_detail"}},
-				"list"		=>	{"structure"	=>	{"9077" 		=>	"structure_with_one_article"}}
-			}
+			# load the structure_tree
+			structure_tree = load_structure_tree
 
 			# get the different endpoints that are called for the api
 			# for all steps in the request path
@@ -104,7 +97,6 @@ module RestServiceModule
 				else
 					definition_name = definition_name[args[i]]
 				end
-				#puts definition_name
 			end
 			return send(definition_name, @base_url)
 		end
