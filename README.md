@@ -5,7 +5,7 @@ A small Webrick-based server to quickly build an API for testing purposes. Since
 
 ## Howto
 * git clone
-* install the gems
+* install the gems with bundle install
 * start the server via ruby server.rb
 
 ## Configuration
