@@ -95,10 +95,22 @@ module RestServiceModule
 			for i in 0..args.size-1
 				# for the first step, we have to load the structure_tree
 				if i == 0
-					definition_name = structure_tree[args[i]]
+					# check if the key in the structure_tree is aaany.
+					if structure_tree.keys[0] == "aaany"
+						definition_name = definition_name["aaany"]
+					# if not, use the real path
+					else
+						definition_name = structure_tree[args[i]]
+					end
 				# after that, we can just step through the hash
 				else
-					definition_name = definition_name[args[i]]
+					# check if the key in the structure_tree is aaany.
+					if definition_name.keys[0] == "aaany"
+						definition_name = definition_name["aaany"]
+					# if not, use the real path
+					else
+						definition_name = definition_name[args[i]]
+					end
 				end
 			end
 			return send(definition_name, @base_url)
