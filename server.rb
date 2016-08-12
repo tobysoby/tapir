@@ -22,15 +22,18 @@ ensure
 end
  
 def start_webrick(config = {})
-  config.update(:Port => 4567)     
-  server = HTTPServer.new(config)
-  yield server if block_given?
-  ['INT', 'TERM'].each {|signal| 
-    trap(signal) {server.shutdown}
-  }
-  @base_url = "http://" + local_ip + ":4567/ApiTest"
-  puts @base_url
-  server.start
+	mime_types = WEBrick::HTTPUtils::DefaultMimeTypes
+	mime_types.store 'json', 'application/json'
+  	config.update(	:Port 		=> 	4567,
+  					:MimeTypes	=>	mime_types)     
+	server = HTTPServer.new(config)
+	yield server if block_given?
+	['INT', 'TERM'].each {|signal| 
+		trap(signal) {server.shutdown}
+	}
+	@base_url = "http://" + local_ip + ":4567/ApiTest"
+	puts @base_url
+	server.start
 end
  
 class RestServlet < HTTPServlet::AbstractServlet
@@ -59,6 +62,8 @@ class RestServlet < HTTPServlet::AbstractServlet
 				raise HTTPStatus::NotFound if !response_class.respond_to?(response_method)
 				# remaining path segments get passed in as arguments to the method
 				if path.length > 2
+					# set the content-type to appliction/json
+					resp['Content-Type'] = 'application/json'
 					resp.body = response_class.send(response_method, path[2..-1])
 				else
 					resp.body = response_class.send(response_method)
@@ -83,6 +88,7 @@ module RestServiceModule
 		def self.api(args)
 			# load the structure_tree
 			structure_tree = load_structure_tree
+			puts structure_tree
 
 			# get the different endpoints that are called for the api
 			# for all steps in the request path
