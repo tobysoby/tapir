@@ -11,6 +11,7 @@ A small Webrick-based server to quickly build an API for testing purposes. Since
 ## Configuration
 * The structure of the API is defined in properties.rb. There you'll find a hash with the different endpoints. Request parameters are given in the same way as parts of the path, only will they need to be written combined.
 * If the value in the hash is a string, not another hash, the server will call a function of that name which returns the generated answer.
+* If the key in the hash is "aaany", any request is served.
 
 ## Examples
 * The URL local_ip:4567/ApiTest/api/path2/path22/xyz will deliver the json from example_3.rb
