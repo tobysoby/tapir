@@ -1,11 +1,11 @@
 require 'json'
 
 def example_3 (base_url)
-		json_to_return = {
-			apiVersion: "3.0.0",
-			example: [{
-				id: 3,
-				text: "blubb"
-			}]
-		}.to_json
+	uri = URI.parse("https://jsonplaceholder.typicode.com/posts")
+
+	http = Net::HTTP.new(uri.host, uri.port)
+	request = Net::HTTP::Get.new(uri.request_uri)
+
+	response = http.request(request)
+	return response.body
 end
