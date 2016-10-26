@@ -88,7 +88,7 @@ module RestServiceModule
 		def self.api(args)
 			# load the structure_tree
 			structure_tree = load_structure_tree
-			puts structure_tree
+			#puts structure_tree
 
 			# get the different endpoints that are called for the api
 			# for all steps in the request path
@@ -97,7 +97,7 @@ module RestServiceModule
 				if i == 0
 					# check if the key in the structure_tree is aaany.
 					if structure_tree.keys[0] == "aaany"
-						definition_name = definition_name["aaany"]
+						definition_name = structure_tree["aaany"]
 					# if not, use the real path
 					else
 						definition_name = structure_tree[args[i]]
@@ -106,13 +106,33 @@ module RestServiceModule
 				else
 					# check if the key in the structure_tree is aaany.
 					if definition_name.keys[0] == "aaany"
-						definition_name = definition_name["aaany"]
+						# if the path should have an endpoint and should be ongoing at the same time, the value should be in an array
+						if definition_name["aaany"].class == Array
+							# if its the last iteration, the endpoint is the first value in the array
+							if i == args.size-1
+								definition_name = definition_name["aaany"][0]
+							# if its not the last iteration, we have to write the second value in the array to definition_name
+							else
+								definition_name = definition_name["aaany"][1]
+							end
+						else
+							definition_name = definition_name["aaany"]
+						end
 					# if not, use the real path
 					else
-						definition_name = definition_name[args[i]]
+						if definition_name[args[i]].class == Array
+							if i == args.size-1
+								definition_name = definition_name[args[i]][0]
+							else
+								definition_name = definition_name[args[i]][1]
+							end
+						else
+							definition_name = definition_name[args[i]]
+						end
 					end
 				end
 			end
+			#puts send(definition_name, @base_url)
 			return send(definition_name, @base_url)
 		end
 	end

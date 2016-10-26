@@ -11,7 +11,8 @@ def load_structure_tree
 																		"requestparameterd=f"	=>	"example_2"}
 											}
 							},
-				"path2"	=> 	{"path22"	=>	{"xyz"	=>	"example_3"}
+				"path2"	=> 	{"path22"	=>	{"xyz"	=>	["example_3", {"blab"		=> "example_1"}]
+											}
 							}
 			}
 end
